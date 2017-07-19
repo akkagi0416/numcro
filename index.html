@@ -5,6 +5,10 @@
   <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
   <title></title>
   <style>
+    main{
+      width: 980px;
+      margin: 0 auto;
+    }
     .row{
       display: flex;
     }
@@ -41,12 +45,28 @@
     .row .cell:nth-of-type(6){
       border-right: 2px solid #666;
     }
+    #debug{
+      display: flex;
+      flex-wrap: wrap;
+      margin: 2rem 0;
+      padding: 2rem 0;
+      border-top: 1px solid #ccc;
+    }
+    #debug .table{
+      margin-right: 1rem;
+      margin-bottom: 1rem;
+    }
+    #debug .cell{
+      display: flex;
+      padding: 0;
+    }
   </style>
 </head>
 <body>
-  <section>
-    <form name="fm">
-      <textarea id="input" name="input" cols="12" rows="12">
+  <main>
+    <section class="input">
+      <form name="fm">
+        <textarea id="input" name="input" cols="12" rows="12">
 054 000 000
 700 640 850
 238 070 096
@@ -58,13 +78,20 @@
 570 030 284
 029 085 007
 000 000 910
-      </textarea>
-      <input type="button" value="read" onclick="read_form()">
-    </form>
-  </section>
-  <section>
-    <div id="table"></div>
-  </section>
+        </textarea>
+        <input type="button" value="read" onclick="read_form()">
+      </form>
+    </section>
+    <section id="buttons">
+      <input type="button" value="step" onclick="debug_step()">
+      <input type="button" value="line" onclick="">
+      <input type="button" value="box" onclick="">
+    </section>
+    <section id="view">
+    </section>
+    <section id="debug">
+    </section>
+  </main>
   <script src="numcro.js"></script>
 </body>
 </html>

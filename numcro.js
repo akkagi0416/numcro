@@ -1,3 +1,6 @@
+const VIEW  = 0
+const DEBUG = 1
+
 var arr = []
 var arr_init = [
   '054 000 000',
@@ -10,29 +13,12 @@ var arr_init = [
   '029 085 007',
   '000 000 910'
 ]
+var step = 0
 
 function initialize(){
-  var table = document.getElementById('table')
-
-  // table作成
   for(var y = 0; y < 9; y++){
-    var row = document.createElement('div')
-    row.classList.add('row')
-    table.appendChild(row)
-
     arr[y] = []
     for(var x = 0; x < 9; x++){
-      var cell = document.createElement('div')
-      cell.className = 'cell'
-      cell.id = 'c' + String(y * 10 + x)
-      row.appendChild(cell)
-
-      for(var c = 1; c <= 9; c++){
-        var number = document.createElement('div')
-        number.className = 'number exists'
-        cell.appendChild(number)
-      }
-
       arr[y][x] = '123456789'
     }
   }
@@ -61,13 +47,36 @@ function read_form(){
       arr[y][x] = number
     }
   }
-  arr_display()
+  arr_display(VIEW)
 }
 
-function arr_display(){
+function arr_display(place){
+  var section
+  if(place == VIEW){
+    section = document.getElementById('view')
+  }else{
+    section = document.getElementById('debug')
+  }
+
+  var table = document.createElement('div')
+  table.className = 'table'
+  section.appendChild(table)
+
   for(var y = 0; y < 9; y++){
+    var row = document.createElement('div')
+    row.classList.add('row')
+    table.appendChild(row)
+
     for(var x = 0; x < 9; x++){
-      var cell = document.getElementById('c' + String(y * 10 + x))
+      var cell = document.createElement('div')
+      cell.className = 'cell'
+      row.appendChild(cell)
+
+      for(var c = 1; c <= 9; c++){
+        var number = document.createElement('div')
+        number.className = 'number exists'
+        cell.appendChild(number)
+      }
 
       if(arr[y][x].length == 1){
         // fix
@@ -89,6 +98,30 @@ function arr_display(){
       }
     }
   }
+}
+
+function debug_step(){
+  arr_display(DEBUG)
+}
+
+function line_h(){
+  var x, y
+  var i
+
+  for(y = 0; y < 9; y++){
+    for(x = 0; x < 9; x++){
+      if(arr[y][x].len != 1){ continue }
+
+      for(i = 0; i < 9; i++){
+        if(i == x){ continue }
+
+        arr[y][i].replace(arr[y][x], '')
+      }
+    }
+  }
+}
+
+function line_v(){
 }
 
 
