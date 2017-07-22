@@ -60,6 +60,10 @@
       display: flex;
       padding: 0;
     }
+    #debug .number{
+      width: 10px;
+      height: 10px;
+    }
   </style>
 </head>
 <body>
@@ -83,9 +87,9 @@
       </form>
     </section>
     <section id="buttons">
-      <input type="button" value="step" onclick="debug_step()">
-      <input type="button" value="line" onclick="">
-      <input type="button" value="box" onclick="">
+      <button id="line_h">line_h</button>
+      <button id="line_v">line_v</button>
+      <button id="box">box</button>
     </section>
     <section id="view">
     </section>

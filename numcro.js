@@ -15,6 +15,14 @@ var arr_init = [
 ]
 var step = 0
 
+var line_h = document.getElementById('line_h')
+var line_v = document.getElementById('line_v')
+var box    = document.getElementById('box')
+
+line_h.addEventListener('click', function(){ func_line_h() })
+line_v.addEventListener('click', function(){ func_line_v() })
+box.addEventListener('click', function(){ func_box() })
+
 function initialize(){
   for(var y = 0; y < 9; y++){
     arr[y] = []
@@ -50,6 +58,16 @@ function read_form(){
   arr_display(VIEW)
 }
 
+function arr_length(){
+  var length = 0;
+  for(var y = 0; y < 9; y++){
+    for(var x = 0; x < 9; x++){
+      length += arr[y][x].length
+    }
+  }
+  return length
+}
+
 function arr_display(place){
   var section
   if(place == VIEW){
@@ -60,7 +78,14 @@ function arr_display(place){
 
   var table = document.createElement('div')
   table.className = 'table'
-  section.appendChild(table)
+
+  // display remain numbers(goal : 9 * 9 = 81)
+  var p     = document.createElement('p')
+  p.innerText = "remain : " + arr_length()
+  table.appendChild(p)
+
+  var table_last = document.querySelector('#debug .table')
+  section.insertBefore(table, table_last) // ok table_last == null
 
   for(var y = 0; y < 9; y++){
     var row = document.createElement('div')
@@ -104,26 +129,59 @@ function debug_step(){
   arr_display(DEBUG)
 }
 
-function line_h(){
-  var x, y
-  var i
+function func_line_h(){
+  for(var y = 0; y < 9; y++){
+    for(var x = 0; x < 9; x++){
+      if(arr[y][x].length != 1){ continue } // 未確定cellなら次
 
-  for(y = 0; y < 9; y++){
-    for(x = 0; x < 9; x++){
-      if(arr[y][x].len != 1){ continue }
-
-      for(i = 0; i < 9; i++){
+      // ここへ来たら確定cellなので他の横列から該当数字を削除
+      for(var i = 0; i < 9; i++){
         if(i == x){ continue }
-
-        arr[y][i].replace(arr[y][x], '')
+        arr[y][i] = arr[y][i].replace(arr[y][x], '')
       }
     }
   }
+  arr_display(DEBUG)
 }
 
-function line_v(){
+function func_line_v(){
+  for(var y = 0; y < 9; y++){
+    for(var x = 0; x < 9; x++){
+      if(arr[y][x].length != 1){ continue } // 未確定cellなら次
+
+      // ここへ来たら確定cellなので他の縦列から該当数字を削除
+      for(var i = 0; i < 9; i++){
+        if(i == y){ continue }
+        arr[i][x] = arr[i][x].replace(arr[y][x], '')
+      }
+    }
+  }
+  arr_display(DEBUG)
 }
 
+function func_box(){
+  for(var box_y = 0; box_y < 3; box_y++){
+    for(var box_x = 0; box_x < 3; box_x++){
+      for(var y = 0; y < 3; y++){
+        for(var x = 0; x < 3; x++){
+          if(arr[box_y * 3 + y][box_x * 3 + x].length != 1){
+            // 未確定cellなのでbox内の確定数字を削除
+            for(var j = 0; j < 3; j++){
+              for(var i = 0; i < 3; i++){
+                if(i == x && j == y){ continue }
+                var str = arr[box_y * 3 + j][box_x * 3 + i]
+                if(str.length != 1){ continue }
+                console.log(str + " @box_x:" + box_x + " box_y:" + box_y + " x:" + x + " y:" + y + " i:" + i + " j:" + j)
+                arr[box_y * 3 + y][box_x * 3 + x] = arr[box_y * 3 + y][box_x * 3 + x].replace(str, '')
+              }
+            }
+          } 
+        }
+      }
+    } // box_x
+  } // box_y
+  arr_display(DEBUG)
+}
 
 initialize()
 
