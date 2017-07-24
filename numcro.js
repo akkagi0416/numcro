@@ -15,13 +15,21 @@ var arr_init = [
 ]
 var step = 0
 
-var line_h = document.getElementById('line_h')
-var line_v = document.getElementById('line_v')
-var box    = document.getElementById('box')
+var auto    = document.getElementById('auto')
+var line_h  = document.getElementById('line_h')
+var line_v  = document.getElementById('line_v')
+var box     = document.getElementById('box')
+var only1_h = document.getElementById('only1_h')
+var only1_v = document.getElementById('only1_v')
+var only1_box = document.getElementById('only1_box')
 
+auto.addEventListener('click', function(){ func_auto() })
 line_h.addEventListener('click', function(){ func_line_h() })
 line_v.addEventListener('click', function(){ func_line_v() })
 box.addEventListener('click', function(){ func_box() })
+only1_h.addEventListener('click', function(){ func_only1_h() })
+only1_v.addEventListener('click', function(){ func_only1_v() })
+only1_box.addEventListener('click', function(){ func_only1_box() })
 
 function initialize(){
   for(var y = 0; y < 9; y++){
@@ -55,7 +63,15 @@ function read_form(){
       arr[y][x] = number
     }
   }
+  clean_display()
   arr_display(VIEW)
+}
+
+function clean_display(){
+  var view = document.getElementById('view')
+  var debug = document.getElementById('debug')
+  view.innerHTML = ''
+  debug.innerHTML = ''
 }
 
 function arr_length(){
@@ -68,7 +84,7 @@ function arr_length(){
   return length
 }
 
-function arr_display(place){
+function arr_display(place, str){
   var section
   if(place == VIEW){
     section = document.getElementById('view')
@@ -81,7 +97,7 @@ function arr_display(place){
 
   // display remain numbers(goal : 9 * 9 = 81)
   var p     = document.createElement('p')
-  p.innerText = "remain : " + arr_length()
+  p.innerText = "remain : " + arr_length() + " @ " + str
   table.appendChild(p)
 
   var table_last = document.querySelector('#debug .table')
@@ -129,6 +145,35 @@ function debug_step(){
   arr_display(DEBUG)
 }
 
+function step1(){
+  func_line_h()
+  func_line_v()
+  func_box()
+}
+function func_auto(){
+  var length_last
+  var length_new
+
+  while(1){
+    length_last = arr_length()
+
+    // step1
+    step1()
+
+    length_new = arr_length()
+
+    if(length_last == length_new){
+      // step2
+      func_only1_h()
+      func_only1_v()
+      func_only1_box()
+
+      length_new = arr_length()
+      if(length_last == length_new){ break }
+    }
+  }
+}
+
 function func_line_h(){
   for(var y = 0; y < 9; y++){
     for(var x = 0; x < 9; x++){
@@ -141,7 +186,7 @@ function func_line_h(){
       }
     }
   }
-  arr_display(DEBUG)
+  arr_display(DEBUG, 'line_h')
 }
 
 function func_line_v(){
@@ -156,7 +201,7 @@ function func_line_v(){
       }
     }
   }
-  arr_display(DEBUG)
+  arr_display(DEBUG, 'line_v')
 }
 
 function func_box(){
@@ -171,7 +216,7 @@ function func_box(){
                 if(i == x && j == y){ continue }
                 var str = arr[box_y * 3 + j][box_x * 3 + i]
                 if(str.length != 1){ continue }
-                console.log(str + " @box_x:" + box_x + " box_y:" + box_y + " x:" + x + " y:" + y + " i:" + i + " j:" + j)
+                // console.log(str + " @box_x:" + box_x + " box_y:" + box_y + " x:" + x + " y:" + y + " i:" + i + " j:" + j)
                 arr[box_y * 3 + y][box_x * 3 + x] = arr[box_y * 3 + y][box_x * 3 + x].replace(str, '')
               }
             }
@@ -180,7 +225,103 @@ function func_box(){
       }
     } // box_x
   } // box_y
-  arr_display(DEBUG)
+  arr_display(DEBUG, 'box')
+}
+
+function func_only1_h(){
+  for(var y = 0; y < 9; y++){
+    var str_unfixed = ''
+    var str_1char = ''
+    for(var x = 0; x < 9; x++){
+      if(arr[y][x].length != 1){
+        str_unfixed += arr[y][x]
+      }else{
+        str_unfixed += arr[y][x] + arr[y][x]  // 確定文字は2文字とする
+      }
+    }
+    // 1文字の数字を抽出 -> 確定できる ex)161891689191681658126812 -> 5
+    str_1char = pickup_1char(str_unfixed)
+    for(var i = 0; i < str_1char.length; i++){
+      for(var x = 0; x < 9; x++){
+        if(arr[y][x].length != 1 && arr[y][x].indexOf(str_1char[i]) != -1){
+          arr[y][x] = str_1char[i]
+        }
+      }
+    }
+  }
+  arr_display(DEBUG, 'only1_h')
+}
+
+function func_only1_v(){
+  for(var x = 0; x < 9; x++){
+    var str_unfixed = ''
+    var str_1char = ''
+    for(var y = 0; y < 9; y++){
+      if(arr[y][x].length != 1){
+        str_unfixed += arr[y][x]
+      }else{
+        str_unfixed += arr[y][x] + arr[y][x]  // 確定文字は2文字とする
+      }
+    }
+    // 1文字の数字を抽出 -> 確定できる ex)161891689191681658126812 -> 5
+    str_1char = pickup_1char(str_unfixed)
+    // console.log('x: ' + x + '->' + str_1char)
+    for(var i = 0; i < str_1char.length; i++){
+      for(var y = 0; y < 9; y++){
+        if(arr[y][x].length != 1 && arr[y][x].indexOf(str_1char[i]) != -1){
+          arr[y][x] = str_1char[i]
+        }
+      }
+    }
+  }
+  arr_display(DEBUG, 'only1_v')
+}
+
+function func_only1_box(){
+  for(var box_y = 0; box_y < 3; box_y++){
+    for(var box_x = 0; box_x < 3; box_x++){
+      var str_unfixed = ''
+      var str_1char = ''
+      for(var y = 0; y < 3; y++){
+        for(var x = 0; x < 3; x++){
+          var cell = arr[box_y * 3 + y][box_x * 3 + x]
+          // if(arr[box_y * 3 + y][box_x * 3 + x].length != 1){
+          //   str_unfixed += arr[box_y * 3 + y][box_x * 3 + x]
+          // }
+          if(cell.length != 1){
+            str_unfixed += cell
+          }else{
+            str_unfixed += cell + cell // 確定文字は2文字とする
+          }
+        }
+      }
+      str_1char = pickup_1char(str_unfixed)
+      // console.log('box_x: ' + box_x + ' box_y: ' + box_y + '->' + str_1char + ' =' + str_unfixed)
+      for(var i = 0; i < str_1char.length; i++){
+        for(var y = 0; y < 3; y++){
+          for(var x = 0; x < 3; x++){
+            var cell = arr[box_y * 3 + y][box_x * 3 + x]
+            if(cell.length != 1 && cell.indexOf(str_1char[i]) != -1){
+              arr[box_y * 3 + y][box_x * 3 + x] = str_1char[i]
+            }
+          }
+        }
+      }
+    }
+  }
+  arr_display(DEBUG, 'only1_box')
+}
+
+// '11232' -> '2'
+// '123342' -> '14'
+function pickup_1char(str){
+  var str_1char = ''
+  for(var i = 1; i < 10; i++){
+    if(str.indexOf(i) == str.lastIndexOf(i) && str.indexOf(i) != -1){
+      str_1char += String(i)
+    }
+  }
+  return str_1char
 }
 
 initialize()
