@@ -22,6 +22,9 @@ var box     = document.getElementById('box')
 var only1_h = document.getElementById('only1_h')
 var only1_v = document.getElementById('only1_v')
 var only1_box = document.getElementById('only1_box')
+var pair_h = document.getElementById('pair_h')
+var pair_v = document.getElementById('pair_v')
+var pair_box = document.getElementById('pair_box')
 
 auto.addEventListener('click', function(){ func_auto() })
 line_h.addEventListener('click', function(){ func_line_h() })
@@ -30,6 +33,9 @@ box.addEventListener('click', function(){ func_box() })
 only1_h.addEventListener('click', function(){ func_only1_h() })
 only1_v.addEventListener('click', function(){ func_only1_v() })
 only1_box.addEventListener('click', function(){ func_only1_box() })
+pair_h.addEventListener('click', function(){ func_pair_h() })
+pair_v.addEventListener('click', function(){ func_pair_v() })
+pair_box.addEventListener('click', function(){ func_pair_box() })
 
 function initialize(){
   for(var y = 0; y < 9; y++){
@@ -310,6 +316,87 @@ function func_only1_box(){
     }
   }
   arr_display(DEBUG, 'only1_box')
+}
+
+function func_pair_h(){
+  for(var y = 0; y < 9; y++){
+    for(var x = 0; x < 9; x++){
+      var cell = arr[y][x]
+      if(cell.length == 2){
+        for(var search_x = x + 1; search_x < 9; search_x++){
+          if(arr[y][search_x] == cell){
+            console.log(cell + " @ x:" + x + " y:" + y)
+            // pair cellを見つけたらpair数値は他のcell候補から外す
+            for(var i = 0; i < 9; i++){
+              if(i == x || i == search_x){ continue }
+              arr[y][i] = arr[y][i].replace(cell.charAt(0), '')
+              arr[y][i] = arr[y][i].replace(cell.charAt(1), '')
+            }
+          }
+        }
+      }
+    }
+  }
+  arr_display(DEBUG, 'pair_h')
+}
+
+function func_pair_v(){
+  for(var x = 0; x < 9; x++){
+    for(var y = 0; y < 9; y++){
+      var cell = arr[y][x]
+      if(cell.length == 2){
+        for(var search_y = y + 1; search_y < 9; search_y++){
+          if(arr[search_y][x] == cell){
+            console.log(cell + " @ x:" + x + " y:" + y)
+            // pair cellを見つけたらpair数値は他のcell候補から外す
+            for(var j = 0; j < 9; j++){
+              if(j == y || j == search_y){ continue }
+              arr[j][x] = arr[j][x].replace(cell.charAt(0), '')
+              arr[j][x] = arr[j][x].replace(cell.charAt(1), '')
+            }
+          }
+        }
+      }
+    }
+  }
+  arr_display(DEBUG, 'pair_v')
+}
+
+function func_pair_box(){
+  for(var box_y = 0; box_y < 3; box_y++){
+    for(var box_x = 0; box_x < 3; box_x++){
+      box_next:
+      for(var y = 0; y < 3; y++){
+        for(var x = 0; x < 3; x++){
+          var cell = arr[box_y * 3 + y][box_x * 3 + x]
+          if(cell.length == 2){
+            // console.log(cell + " @ box_x:" + box_x + " box_y:" + box_y + " x:" + x + " y:" + y)
+            // 同じ2文字(数値)がbox内の他cellに無いか探す
+            for(var search_y = y; search_y < 3; search_y++){
+              for(var search_x = 0; search_x < 3; search_x++){  // search_xはsearch_y増加で戻るので0 start
+                if(search_x == x && search_y == y){ continue }
+                if(arr[box_y * 3 + search_y][box_x * 3 + search_x] == arr[box_y * 3 + y][box_x * 3 + x]){
+                  // pair cellを見つけたらpair数値は他のcell候補から外す
+                  console.log(cell + " @ box_x:" + box_x + " box_y:" + box_y + " x:" + x + " y:" + y)
+                  for(var j = 0; j < 3; j++){
+                    for(var i = 0; i < 3; i++){
+                      if(i == x        && j == y       ){ continue }
+                      if(i == search_x && j == search_y){ continue }
+                      // console.log(cell + " @ i:" + i + " j:" + j + " cell:" + arr[box_y * 3 + j][box_x * 3 + i])
+                      arr[box_y * 3 + j][box_x * 3 + i] = arr[box_y * 3 + j][box_x * 3 + i].replace(cell.charAt(0), '')
+                      arr[box_y * 3 + j][box_x * 3 + i] = arr[box_y * 3 + j][box_x * 3 + i].replace(cell.charAt(1), '')
+                    }
+                  }
+                  continue box_next // pariはboxに1つなはずなので、1つ処理したら次のboxへ
+                }
+              }
+            }
+          } // arr[box_y * 3 + y][box_x * 3 + x].length == 2
+        }
+      }
+    }
+  }
+  arr_display(DEBUG, 'pair_box')
 }
 
 // '11232' -> '2'

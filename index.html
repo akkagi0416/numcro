@@ -74,7 +74,7 @@
   <main>
     <section class="input">
       <form name="fm">
-        <!-- difficult Q211 -->
+        <!-- difficult Q211  by pair or 3cell -->
         <textarea id="input" name="input" cols="12" rows="12">
 070 000 200
 000 905 008
@@ -88,7 +88,7 @@
 400 501 000
 006 000 030
         </textarea>
-        <!-- normal
+        <!-- normal by only1 Q84
         <textarea id="input" name="input" cols="12" rows="12">
 000 403 000
 600 270 500
@@ -123,6 +123,11 @@
     </section>
     <section id="buttons">
       <button id="auto">auto</button>
+      <div class="level3">
+        <button id="pair_h">pair_h</button>
+        <button id="pair_v">pair_v</button>
+        <button id="pair_box">pair_box</button>
+      </div>
       <div class="level2">
         <button id="only1_h">only1_h</button>
         <button id="only1_v">only1_v</button>
@@ -143,20 +148,26 @@
   <script>
     $(function(){
       // click value are highlight
-      $(document).on('click', '#debug .table .fixed', function(){
+      //$(document).on('click', '#debug .table .fixed', function(){
+      $(document).on('click', '.table .fixed', function(){
+        var is_highlight = false
+        if($(this).parents('.highlight').length != 0){
+          is_highlight = true
+        }
         $(this).parents('.table').find('.highlight').each(function(i, elem){
           $(this).removeClass('highlight')
         })
 
-        var number = $(this).text()
-        $(this).parents('.cell').addClass('highlight')
+        if(is_highlight == false){
+          var number = $(this).text()
+          $(this).parents('.cell').addClass('highlight')
 
-        $(this).parents('.table').find('.fixed').each(function(i, elem){
-          console.log(i)
-          if($(this).text() == number){
-            $(this).parents('.cell').addClass('highlight')
-          }
-        })
+          $(this).parents('.table').find('.fixed').each(function(i, elem){
+            if($(this).text() == number){
+              $(this).parents('.cell').addClass('highlight')
+            }
+          })
+        }
       })
     });
   </script>
